@@ -17,8 +17,17 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Load Data ──
+import gdown
+import os
+
 @st.cache_data
 def load_data():
+    if not os.path.exists("rideshare_kaggle.csv"):
+        # Replace with YOUR file ID from Google Drive
+        file_id = "PASTE_YOUR_FILE_ID_HERE"
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, "rideshare_kaggle.csv", quiet=False)
+
     ds = pd.read_csv("rideshare_kaggle.csv")
     ds.dropna(subset=["price"], inplace=True)
     ds["price_per_mile"] = ds["price"] / ds["distance"]
