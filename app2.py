@@ -22,23 +22,8 @@ import os
 @st.cache_data
 def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
-        # Validate secrets exist before attempting download
-        missing = [k for k in ("KAGGLE_USERNAME", "KAGGLE_KEY") if k not in st.secrets]
-        if missing:
-            st.error(
-                "**Dataset download failed — Kaggle credentials not found.**\n\n"
-                "Please add the following secrets in Streamlit Cloud:\n"
-                "**Manage app → Settings → Secrets**\n\n"
-                "```toml\n"
-                "KAGGLE_USERNAME = \"your_kaggle_username\"\n"
-                "KAGGLE_KEY      = \"your_kaggle_api_key\"\n"
-                "```\n\n"
-                "Get your API key at https://www.kaggle.com → Account → Create New Token"
-            )
-            st.stop()
-
-        os.environ["KAGGLE_USERNAME"] = st.secrets["KAGGLE_USERNAME"]
-        os.environ["KAGGLE_KEY"] = st.secrets["KAGGLE_KEY"]
+        os.environ["KAGGLE_USERNAME"] = st.secrets.get("KAGGLE_USERNAME", "avnsivakrishnasai")
+        os.environ["KAGGLE_KEY"] = st.secrets.get("KAGGLE_KEY", "KGAT_ea76be775ad8f6da64eaca742923bb35")
         from kaggle.api.kaggle_api_extended import KaggleApiExtended
         api = KaggleApiExtended()
         api.authenticate()
