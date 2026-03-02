@@ -17,33 +17,45 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Load Data ──
-import os
+import os, zipfile, requests
 from dotenv import load_dotenv
 load_dotenv()  # loads .env locally; no-op on Streamlit Cloud
 
 @st.cache_data
 def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
-        import subprocess, zipfile
-        # Prefer st.secrets (Streamlit Cloud), fall back to .env (local)
-        os.environ["KAGGLE_USERNAME"] = st.secrets.get("KAGGLE_USERNAME", os.getenv("KAGGLE_USERNAME", ""))
-        os.environ["KAGGLE_KEY"] = st.secrets.get("KAGGLE_KEY", os.getenv("KAGGLE_KEY", ""))
-        # Use kaggle CLI — avoids internal API import issues across Python versions
-        subprocess.run(
-            [
-                "kaggle", "datasets", "download",
-                "-d", "ravi72munde/uber-lyft-cab-prices",
-                "--file", "rideshare_kaggle.csv",
-                "-p", ".",
-            ],
-            check=True,
+        # Credentials: st.secrets on Streamlit Cloud, .env locally
+        try:
+            username = st.secrets["KAGGLE_USERNAME"]
+            key      = st.secrets["KAGGLE_KEY"]
+        except Exception:
+            username = os.getenv("KAGGLE_USERNAME", "")
+            key      = os.getenv("KAGGLE_KEY", "")
+
+        if not username or not key:
+            st.error("Kaggle credentials not found. Add KAGGLE_USERNAME and KAGGLE_KEY to Streamlit secrets.")
+            st.stop()
+
+        # Direct Kaggle REST API download — no CLI or package internals needed
+        url = (
+            "https://www.kaggle.com/api/v1/datasets/download/"
+            "ravi72munde/uber-lyft-cab-prices"
+            "?fileName=rideshare_kaggle.csv"
         )
-        # Unzip if downloaded as archive
-        zip_path = "rideshare_kaggle.csv.zip"
-        if os.path.exists(zip_path):
-            with zipfile.ZipFile(zip_path, "r") as z:
-                z.extractall(".")
-            os.remove(zip_path)
+        resp = requests.get(url, auth=(username, key), stream=True, timeout=120)
+        if resp.status_code != 200:
+            st.error(f"Kaggle download failed (HTTP {resp.status_code}). Check your credentials.")
+            st.stop()
+
+        raw_path = "rideshare_kaggle.csv.zip"
+        with open(raw_path, "wb") as f:
+            for chunk in resp.iter_content(chunk_size=1024 * 1024):
+                f.write(chunk)
+
+        # Unzip
+        with zipfile.ZipFile(raw_path, "r") as z:
+            z.extractall(".")
+        os.remove(raw_path)
 
     ds = pd.read_csv("rideshare_kaggle.csv")
     ds.dropna(subset=["price"], inplace=True)

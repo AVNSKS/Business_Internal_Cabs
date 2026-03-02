@@ -5,7 +5,5 @@ seaborn
 scikit-learn
 streamlit==1.32.0
 notebook
-gdown
-kaggle
 python-dotenv
 altair==4.2.2
