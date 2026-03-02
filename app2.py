@@ -21,10 +21,8 @@ import os, zipfile, requests
 from dotenv import load_dotenv
 load_dotenv()  # loads .env locally; no-op on Streamlit Cloud
 
-@st.cache_data
 def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
-        # Credentials: st.secrets on Streamlit Cloud, .env locally
         try:
             username = st.secrets["KAGGLE_USERNAME"]
             key      = st.secrets["KAGGLE_KEY"]
@@ -36,15 +34,15 @@ def load_data():
             st.error("Kaggle credentials not found. Add KAGGLE_USERNAME and KAGGLE_KEY to Streamlit secrets.")
             st.stop()
 
-        # Direct Kaggle REST API download — no CLI or package internals needed
         url = (
             "https://www.kaggle.com/api/v1/datasets/download/"
-            "ravi72munde/uber-lyft-cab-prices"
+            "brllrb/uber-and-lyft-dataset-boston-ma"
             "?fileName=rideshare_kaggle.csv"
         )
-        resp = requests.get(url, auth=(username, key), stream=True, timeout=120)
+
+        resp = requests.get(url, auth=(username, key), stream=True, timeout=300)
         if resp.status_code != 200:
-            st.error(f"Kaggle download failed (HTTP {resp.status_code}). Check your credentials.")
+            st.error(f"Kaggle download failed (HTTP {resp.status_code}). Check dataset slug and fileName.")
             st.stop()
 
         raw_path = "rideshare_kaggle.csv.zip"
@@ -52,7 +50,7 @@ def load_data():
             for chunk in resp.iter_content(chunk_size=1024 * 1024):
                 f.write(chunk)
 
-        # Unzip
+        import zipfile
         with zipfile.ZipFile(raw_path, "r") as z:
             z.extractall(".")
         os.remove(raw_path)
@@ -61,6 +59,7 @@ def load_data():
     ds.dropna(subset=["price"], inplace=True)
     ds["price_per_mile"] = ds["price"] / ds["distance"]
     return ds
+
 
 ds = load_data()
 
