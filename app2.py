@@ -17,14 +17,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ── Load Data ──
-import gdown
 import os
 
 @st.cache_data
 def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
-        file_id = "1tLoojmKDZwiLtx5KzrXVQ8GbMRmUSdax"
-        gdown.download(id=file_id, output="rideshare_kaggle.csv", quiet=False)
+        # Use Kaggle API credentials stored in Streamlit secrets
+        os.environ["KAGGLE_USERNAME"] = st.secrets["KAGGLE_USERNAME"]
+        os.environ["KAGGLE_KEY"] = st.secrets["KAGGLE_KEY"]
+        from kaggle.api.kaggle_api_extended import KaggleApiExtended
+        api = KaggleApiExtended()
+        api.authenticate()
+        api.dataset_download_file(
+            "ravi72munde/uber-lyft-cab-prices",
+            file_name="rideshare_kaggle.csv",
+            path=".",
+        )
+        # Dataset downloads as a zip if needed — unzip
+        if os.path.exists("rideshare_kaggle.csv.zip"):
+            import zipfile
+            with zipfile.ZipFile("rideshare_kaggle.csv.zip", "r") as z:
+                z.extractall(".")
+            os.remove("rideshare_kaggle.csv.zip")
 
     ds = pd.read_csv("rideshare_kaggle.csv")
     ds.dropna(subset=["price"], inplace=True)
