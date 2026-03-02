@@ -26,8 +26,8 @@ def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
         import subprocess, zipfile
         # Prefer st.secrets (Streamlit Cloud), fall back to .env (local)
-        os.environ["KAGGLE_USERNAME"] = st.secrets.get("KAGGLE_USERNAME", os.getenv("KAGGLE_USERNAME", "avnsivakrishnasai"))
-        os.environ["KAGGLE_KEY"] = st.secrets.get("KAGGLE_KEY", os.getenv("KAGGLE_KEY", "9f87b34fa84c93a744b00ac702f32f82"))
+        os.environ["KAGGLE_USERNAME"] = st.secrets.get("KAGGLE_USERNAME", os.getenv("KAGGLE_USERNAME", ""))
+        os.environ["KAGGLE_KEY"] = st.secrets.get("KAGGLE_KEY", os.getenv("KAGGLE_KEY", ""))
         # Use kaggle CLI — avoids internal API import issues across Python versions
         subprocess.run(
             [
