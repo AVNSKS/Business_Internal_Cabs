@@ -1,122 +1,48 @@
-Uber vs Lyft Operational Efficiency Analysis (Boston)
-Problem Statement
+# Uber vs. Lyft: Operational Efficiency Analysis
 
-To compare the operational efficiency of Uber and Lyft in Boston using real ride data, focusing on cost comparison and demand clustering to identify pricing behavior and demand patterns across time and locations.
+## 📌 Problem Statement
+A comparative analysis of Uber and Lyft’s operational efficiency in Boston. The project utilizes real ride data to identify pricing behaviors, surge sensitivities, and demand patterns through cost metrics and K-Means clustering.
 
-📂 Dataset
+## 📂 Dataset
+*   **Source:** [Kaggle - Uber and Lyft Dataset (Boston, MA)](https://www.kaggle.com)
+*   **Attributes:** Price, distance, timestamp, ride type, surge multiplier, and coordinates.
 
-Source: Kaggle
+## 🛠 Tech Stack
+*   **Language:** [Python](https://www.python.org)
+*   **Libraries:** `Pandas`, `NumPy`, `Matplotlib`, `Seaborn`, `Scikit-learn`
+*   **Environment:** [Jupyter Notebook](https://jupyter.org)
 
-Dataset: Uber and Lyft Dataset – Boston, MA
+## 🚀 Project Workflow
+1.  **Data Preprocessing:** 
+    *   Cleaned missing/inconsistent values.
+    *   Feature Engineering: Extracted `hour_of_day` and calculated `price_per_mile`.
+2.  **Cost Analysis:** 
+    *   Compared average ride prices and surge multipliers.
+    *   Analyzed pricing fluctuations by time of day.
+3.  **Demand Clustering:** 
+    *   Implemented **K-Means Clustering** using `Hour`, `Price`, and `Distance`.
+    *   Features standardized via [StandardScaler](https://scikit-learn.org).
 
-Description:
-The dataset contains ride-level information such as price, distance, time, ride type, surge multiplier, and geographical coordinates for Uber and Lyft rides in Boston.
+## 📈 Key Findings
+*   **Uber** generally offers a lower price-per-mile, indicating higher cost efficiency.
+*   **Lyft** shows higher surge sensitivity during peak hours.
+*   **Clustering** successfully separated high-demand commuter peaks from low-cost off-peak periods.
 
-Tech Stack Used
-
-Programming Language: Python
-
-Libraries:
-
-Pandas, NumPy – Data manipulation
-
-Matplotlib, Seaborn – Data visualization
-
-Scikit-learn – Clustering and scaling
-
-Environment: Jupyter Notebook
-
-Project Approach
-Data Preprocessing
-
-1. Removed missing and inconsistent values
-
-Filtered rides specific to Boston
-
-Extracted time-based features such as hour of the day
-
-Created derived metrics like price per mile for efficiency comparison
-
-2. Cost Comparison Analysis
-
-The following cost metrics were analyzed for Uber and Lyft:
-
-Average ride price
-
-Price per mile (cost efficiency)
-
-Surge multiplier comparison
-
-Price variation across different hours of the day
-
-Ride-type-wise cost comparison
-
-Identification of peak and off-peak pricing behavior
-
-3. Demand Analysis
-
-Analyzed ride demand distribution by hour
-
-Identified peak demand hours
-
-Studied popular pickup and drop-off locations
-
-Compared demand patterns between Uber and Lyft
-
-4. Demand Clustering
-
-Applied K-Means clustering to identify demand patterns
-
-Features used for clustering:
-
-Hour of day
-
-Ride price
-
-Ride distance
-
-Standardized data using StandardScaler
-
-Visualized clusters to interpret high-demand and high-cost periods
-
-* Key Findings
-
-Uber generally shows lower price per mile, indicating better cost efficiency in several scenarios
-
-Lyft exhibits higher surge sensitivity during peak hours
-
-Peak demand occurs during typical commute hours
-
-Clustering reveals distinct ride patterns such as:
-
-High-demand, high-cost peak-hour rides
-
-Low-demand, low-cost off-peak rides
-
-* Conclusion
-
-The analysis demonstrates that both Uber and Lyft have distinct operational strategies. While Uber appears more cost-efficient on average, Lyft’s pricing fluctuates more during peak demand periods. Demand clustering highlights critical operational stress periods that influence pricing and availability for both services.
-
-* Future Enhancements
-
-Use advanced clustering techniques like DBSCAN
-
-Incorporate weather and traffic data
-
-Perform real-time demand prediction
-
-Extend analysis to other cities
-
-📁 Project Structure
+## 📁 Project Structure
+```text
 Internal_Project_Business/
-│
-├── main.ipynb
+├── main.ipynb             # Analysis & Visualizations
 ├── data/
 │   └── uber_lyft_boston.csv
-├── results/
-├── README.md
-└── requirements.txt
+├── results/               # Saved plots and figures
+├── README.md              # Project Documentation
+└── requirements.txt       # Python dependencies
+```
+
+## Run the analysis:
+Execute the cells in main.ipynb sequentially.
 * How to Run the Project
+``` text
 
 Clone or download the project
 
@@ -127,3 +53,5 @@ pip install -r requirements.txt
 Open main.ipynb in Jupyter Notebook
 
 Run cells sequentially
+
+```
