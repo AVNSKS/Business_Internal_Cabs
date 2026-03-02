@@ -23,10 +23,8 @@ import os
 @st.cache_data
 def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
-        # Replace with YOUR file ID from Google Drive
         file_id = "1tLoojmKDZwiLtx5KzrXVQ8GbMRmUSdax"
-        url = f"https://drive.google.com/uc?id={file_id}&confirm=t"
-        gdown.download(url, "rideshare_kaggle.csv", quiet=False)
+        gdown.download(id=file_id, output="rideshare_kaggle.csv", quiet=False)
 
     ds = pd.read_csv("rideshare_kaggle.csv")
     ds.dropna(subset=["price"], inplace=True)
