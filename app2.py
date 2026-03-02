@@ -24,23 +24,26 @@ load_dotenv()  # loads .env locally; no-op on Streamlit Cloud
 @st.cache_data
 def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
+        import subprocess, zipfile
         # Prefer st.secrets (Streamlit Cloud), fall back to .env (local)
         os.environ["KAGGLE_USERNAME"] = st.secrets.get("KAGGLE_USERNAME", os.getenv("KAGGLE_USERNAME", ""))
         os.environ["KAGGLE_KEY"] = st.secrets.get("KAGGLE_KEY", os.getenv("KAGGLE_KEY", ""))
-        from kaggle.api.kaggle_api_extended import KaggleApiExtended
-        api = KaggleApiExtended()
-        api.authenticate()
-        api.dataset_download_file(
-            "ravi72munde/uber-lyft-cab-prices",
-            file_name="rideshare_kaggle.csv",
-            path=".",
+        # Use kaggle CLI — avoids internal API import issues across Python versions
+        subprocess.run(
+            [
+                "kaggle", "datasets", "download",
+                "-d", "ravi72munde/uber-lyft-cab-prices",
+                "--file", "rideshare_kaggle.csv",
+                "-p", ".",
+            ],
+            check=True,
         )
         # Unzip if downloaded as archive
-        if os.path.exists("rideshare_kaggle.csv.zip"):
-            import zipfile
-            with zipfile.ZipFile("rideshare_kaggle.csv.zip", "r") as z:
+        zip_path = "rideshare_kaggle.csv.zip"
+        if os.path.exists(zip_path):
+            with zipfile.ZipFile(zip_path, "r") as z:
                 z.extractall(".")
-            os.remove("rideshare_kaggle.csv.zip")
+            os.remove(zip_path)
 
     ds = pd.read_csv("rideshare_kaggle.csv")
     ds.dropna(subset=["price"], inplace=True)
