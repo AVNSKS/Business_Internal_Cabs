@@ -18,12 +18,15 @@ st.markdown("""
 
 # ── Load Data ──
 import os
+from dotenv import load_dotenv
+load_dotenv()  # loads .env locally; no-op on Streamlit Cloud
 
 @st.cache_data
 def load_data():
     if not os.path.exists("rideshare_kaggle.csv"):
-        os.environ["KAGGLE_USERNAME"] = st.secrets.get("KAGGLE_USERNAME", "avnsivakrishnasai")
-        os.environ["KAGGLE_KEY"] = st.secrets.get("KAGGLE_KEY", "KGAT_ea76be775ad8f6da64eaca742923bb35")
+        # Prefer st.secrets (Streamlit Cloud), fall back to .env (local)
+        os.environ["KAGGLE_USERNAME"] = st.secrets.get("KAGGLE_USERNAME", os.getenv("KAGGLE_USERNAME", ""))
+        os.environ["KAGGLE_KEY"] = st.secrets.get("KAGGLE_KEY", os.getenv("KAGGLE_KEY", ""))
         from kaggle.api.kaggle_api_extended import KaggleApiExtended
         api = KaggleApiExtended()
         api.authenticate()
